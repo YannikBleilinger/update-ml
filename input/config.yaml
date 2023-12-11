@@ -1,0 +1,6 @@
+path: C:/Users/yanni/OneDrive/Desktop/Uni/Semester 5/Anwendungsprojekt/train new employee/annotations\arkadius p
+train: images
+val: images
+
+names:
+  0: arkadius p
