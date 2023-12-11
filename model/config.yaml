@@ -1,0 +1,6 @@
+path: E:/Uni/Semester 5/Anwendungsprojekt/update-ml\data/yolo_annotations\Claus Gustav
+train: images
+val: images
+
+names:
+  0: Claus Gustav

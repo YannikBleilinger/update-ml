@@ -1,0 +1,50 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual Environment
+venv/
+env/
+*.pyc
+*.pyo
+__pycache__/
+bin/
+lib/
+include/
+lib64/
+share/
+.pytest_cache/
+.pytype/
+
+# Miscellaneous
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+
+# Logs and databases
+*.log
+*.sqlite3
+
+# Compiled Python files
+*.pyc
+
+# Compiled C extension
+*.so
+
+# Compiled Java classes
+*.class
+
+# Generated files by YOLO training
+/data/raw_images/
+/data/yolo_annotations/
+/model/*/*
+#Include the needed model files
+!/model/**/weights
+!/model/*.pt
+!/model/*.txt
+
