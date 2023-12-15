@@ -2,6 +2,7 @@ from ultralytics import YOLO
 import os
 from shutil import copy
 from paths import INPUT_PATH, OUTPUT_PATH, ROOT_PATH, MODEL_PATH
+import json
 
 def detect_buttons_and_create_annotations(employee_name):
 
@@ -140,6 +141,15 @@ def train_new_model(employee_name):
     model.train(data=config_file, epochs=epochs,name=output_dir, save=False, project=ROOT_PATH)
 
     model.export(format="torchscript",optimize=True)
+
+    #update the json of the model
+    with open(os.path.join(MODEL_PATH,"version.json"), 'rw') as file:
+        data = json.load(file)
+        current_verion = data['version']
+        new_version = current_verion+1
+        new_json_data = {'name': employee_name, 'version': new_version}
+        json.dump(new_json_data)
+
 
 
 
