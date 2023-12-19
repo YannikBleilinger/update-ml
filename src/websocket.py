@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify, send_file
-from paths import MODEL_PATH
+from config import MODEL_PATH, getLatestModelName, getLatestModelVersion
+from ultralytics import YOLO
 import threading
 import os
 import train
@@ -7,6 +8,8 @@ import json
 
 app = Flask(__name__)
 semaphore = threading.Semaphore()
+latest_model_path = os.path.join(MODEL_PATH, getLatestModelName, "/weights/best.pt")
+model = YOLO(latest_model_path)
 
 @app.route('/upload', methods=['POST'])
 def upload():
@@ -92,23 +95,27 @@ def checkVersion():
     try:
 
         user_version = int(request.args.get('version'))
-        with open("model/version.json") as file:
-            # in this json file the information about the latest model is stored
-            data = json.load(file)
-            local_version = int(data["version"])
+        local_version = getLatestModelVersion
 
-            if (user_version < local_version):
-                # client gets a 200 status code and the current verion and latest added employee name
-                latest_name = data["name"]
-                return jsonify({"version":local_version, "name":latest_name})
+        if (user_version < local_version):
+            # client gets a 200 status code and the current verion and latest added employee name
+            latest_name = getLatestModelName
+            return jsonify({"version":local_version, "name":latest_name})
 
-            else:
-                # client is still up to date - no pull needed
-                return jsonify({"message":"Already up to date"}), 201
+        else:
+            # client is still up to date - no pull needed
+            return jsonify({"message":"Already up to date"}), 201
 
     except Exception as e:
         print(e)
         return jsonify({"message":f"An error has occured while sending the file. {e}"}), 500
+
+@app.route('/scanImage', methods=['POST'])
+def scanImage():
+
+    image = request.files.get("image")
+
+    result = model.predict(source=image)
 
 
 if __name__ == "__main__":
