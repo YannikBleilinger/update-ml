@@ -5,7 +5,7 @@ OUTPUT_PATH = "data/yolo_annotations" #output of the yolo annotations
 MODEL_PATH = "model" #all information to the existing model
 ROOT_PATH = "E:/Uni/Semester 5/Anwendungsprojekt/update-ml"
 
-def getLatestModelName():
+def getLatestModelName() -> str:
 
     with open("model/version.json") as file:
             # in this json file the information about the latest model is stored

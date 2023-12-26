@@ -5,11 +5,13 @@ import threading
 import os
 import train
 import json
+import random
 
 app = Flask(__name__)
 semaphore = threading.Semaphore()
-latest_model_path = os.path.join(MODEL_PATH, getLatestModelName, "/weights/best.pt")
-model = YOLO(latest_model_path)
+latest_model_path = os.path.join(MODEL_PATH, getLatestModelName(), "/weights/best.pt")
+print(latest_model_path)
+model = YOLO("model\\detect_buttons.pt")
 
 @app.route('/upload', methods=['POST'])
 def upload():
@@ -60,7 +62,7 @@ def upload():
 
 
 @app.route('/updateTorchscript', methods=['GET'])
-def update():
+def updateTorchscript():
     #this route is used to pull the updated and exported model in torchscript format
     try:
         #information for the latest version is stored in the version.json file and is used to retrieve
@@ -76,7 +78,7 @@ def update():
         return jsonify({"message":f"An error has occured while sending the file. {e}"}), 500
 
 @app.route('/updateLabels', methods=['GET'])
-def update():
+def updateLabels():
     # this route is for sending the coressponding classes.txt for the labels of the new model
     try:
         
@@ -112,11 +114,29 @@ def checkVersion():
 
 @app.route('/scanImage', methods=['POST'])
 def scanImage():
+    # this makes sure that no existent images share the same name
+    hash = random.getrandbits(128)
+    # creates a temporary file for scanning
+    temp_path = "%032x.jpg" % hash
+    request.files.get("image").save(temp_path)
 
-    image = request.files.get("image")
+    # scans the image and deletes it afterwards
+    result = model.predict(source=temp_path)
+    os.remove(temp_path)
 
-    result = model.predict(source=image)
 
+    # sends xyxy,  name, index and score of each class
+    print(result[0].tojson())
+    
+    return jsonify(result[0].tojson())
+
+def convert_result_to_json(result) -> str:
+    jsonString : str = ''
+    for r in result:
+        data += f'["xywd": {r.box.xywh}, "name":"{r.name}", "index": {r.index}, "score": {r.conf}],'
+    
+    
+    return data
 
 if __name__ == "__main__":
-    app.run(debug=True, host='192.168.2.128', port=5000)
+    app.run(debug=True, host='192.168.43.84', port=5000)
