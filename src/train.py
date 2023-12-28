@@ -1,7 +1,7 @@
 from ultralytics import YOLO
 import os
 from shutil import copy
-from config import INPUT_PATH, OUTPUT_PATH, ROOT_PATH, MODEL_PATH
+from .config import INPUT_PATH, OUTPUT_PATH, ROOT_PATH, MODEL_PATH
 import json
 
 def detect_buttons_and_create_annotations(employee_name):

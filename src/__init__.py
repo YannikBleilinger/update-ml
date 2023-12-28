@@ -1,1 +1,1 @@
-from websocket import app
+from src.app import app
